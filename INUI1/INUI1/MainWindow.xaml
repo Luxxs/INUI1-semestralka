@@ -4,9 +4,123 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:INUI1"
+        xmlns:dataGrid2D="clr-namespace:DataGrid2DLibrary;assembly=DataGrid2DLibrary"
+        xmlns:sampleData="clr-namespace:INUI1.DesignTime"
+        xmlns:converters="clr-namespace:INUI1.Converters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
+        Title="Hlavolam" Height="350" Width="525"
+        DataContext="{Binding MainViewModel, RelativeSource={RelativeSource Self}}"
+        d:DataContext="{Binding Source={d:DesignInstance Type=sampleData:SampleViewModel, IsDesignTimeCreatable=True}}">
+    <Window.Resources>
+        <converters:CellNumberContentConverter x:Key="CellNumberContentConverter" />
+        <converters:CellBackgroundBrushConverter x:Key="CellBackgroundBrushConverter" />
         
+        <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}" >
+            <Setter Property="TextBlock.TextAlignment" Value="Right" />
+            <Setter Property="TextBlock.VerticalAlignment" Value="Stretch"/>
+            <Setter Property="TextBlock.HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="DarkGray"
+                            ContextMenu="{TemplateBinding ContextMenu}"
+                            BorderThickness="1,1,1,1"
+                            Visibility="{TemplateBinding Visibility}"
+                            SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="2"/>
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter Grid.ZIndex="2" Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch">
+                                </ContentPresenter>
+                                <Rectangle x:Name="c_rectangle" Grid.ZIndex="-1" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"
+                                        Fill="{Binding InPath, Converter={StaticResource CellBackgroundBrushConverter}}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="DataGridCell.IsEditing" Value="True">
+                                <Setter TargetName="c_rectangle" Property="Fill" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=AlternationIndex}" Value="1" >
+                    <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=AlternatingRowBackground}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=AlternationIndex}" Value="0" >
+                    <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=RowBackground}"/>
+                </DataTrigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Background" Value="#3399ff"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Text="Zadejte rozměry:" Margin="0,0,10,0" VerticalAlignment="Center" />
+            <TextBox x:Name="Dimension1" Width="80" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            <!-- Tady nejde PlaceholderText, neuvěřitelné. -->
+            <TextBlock IsHitTestVisible="False" Text="výška (řádky)" Margin="-78,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="DarkGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=Dimension1}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <TextBlock Text="×" Margin="5,0" VerticalAlignment="Center"/>
+            <TextBox x:Name="Dimension2" Width="80" Margin="0,0,10,0"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <TextBlock IsHitTestVisible="False" Text="šířka (sloupce)" Margin="-88,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="DarkGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=Dimension2}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <Button Name="CreateMatrixButton"  Content="Vytvořit matici" Height="20" VerticalAlignment="Top" Click="CreateMatrixButton_Click"/>
+        </StackPanel>
+        
+        <dataGrid2D:DataGrid2D Name="dataGrid2D"
+                               Grid.Row="1"
+                               Margin="5,0,5,5"
+                               ItemsSource2D="{Binding Matrix}"
+                               CellStyle="{StaticResource MyDataGridCellStyle}"
+                               UseModifiedDataGridStyle="True"
+                               SelectionMode="Single"
+                               SelectionUnit="Cell"
+                               Background="Transparent"
+                               HeadersVisibility="None"
+                               HorizontalAlignment="Center" VerticalAlignment="Center">
+        </dataGrid2D:DataGrid2D>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Content="Hledat řešení" />
+        </StackPanel>
+
     </Grid>
 </Window>

@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+	<Compile Include="ViewModel\MainViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,6 +68,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+	<Compile Include="Converters\CellBackgroundBrushConverter.cs" />
+    <Compile Include="Converters\IntToStringArrayContentConverter.cs" />
+    <Compile Include="Converters\CellNumberContentConverter.cs" />
+    <Compile Include="DesignTime\SampleViewModel.cs" />
     <Compile Include="Logic\AbstractPath.cs" />
     <Compile Include="Logic\JoinedPath.cs" />
     <Compile Include="Logic\PathFinder.cs" />
@@ -81,6 +86,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Model\Cell.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -106,6 +112,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\DataGrid2DTest\DataGrid2DLibrary\DataGrid2DLibrary.csproj">
+      <Project>{7d76d9e7-af25-4aa5-995b-e1a526f192ea}</Project>
+      <Name>DataGrid2DLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

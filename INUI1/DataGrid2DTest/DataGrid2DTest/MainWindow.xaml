@@ -1,0 +1,81 @@
+﻿<Window x:Class="DataGrid2DTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dg2d="clr-namespace:DataGrid2DLibrary;assembly=DataGrid2DLibrary"
+        Title="MainWindow" Height="450" Width="525">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Properties (Binding)" Grid.Row="0" Grid.Column="0" Margin="5,5,0,2"/>
+        <ListBox Name="propertiesListBox"
+                 Grid.Column="0"
+                 Grid.Row="1"
+                 SelectedItem="0"
+                 Margin="5,0,5,2"
+                 SelectionChanged="propertiesListBox_SelectionChanged">
+            <ListBoxItem>DoubleList</ListBoxItem>
+            <ListBoxItem>Int2DList</ListBoxItem>
+            <ListBoxItem>ShortCollection</ListBoxItem>
+            <ListBoxItem>String2DCollection</ListBoxItem>
+            <ListBoxItem>ByteArray</ListBoxItem>
+            <ListBoxItem>Int2DJaggedArray</ListBoxItem>
+            <ListBoxItem>Float2DArray</ListBoxItem>
+        </ListBox>
+        <Separator Margin="5" Grid.Row="2"/>
+        <TextBlock Text="Member Variables (Direct set)" Grid.Row="3" Grid.Column="0" Margin="5,0,5,2"/>
+        <ListBox Name="memberVariablesListBox"
+                 Grid.Column="0"
+                 Grid.Row="4"
+                 SelectedItem="0"
+                 Margin="5,0,5,2"
+                 SelectionChanged="memberVariablesListBox_SelectionChanged">
+            <ListBoxItem>m_intJagged2DArray</ListBoxItem>
+            <ListBoxItem>m_int2DList</ListBoxItem>
+        </ListBox>
+        <Grid Grid.Column="1" Grid.RowSpan="7">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="UseModifiedDataGridStyle=True" Grid.Row="0" Margin="5,5,0,2"/>
+            <dg2d:DataGrid2D Name="dataGrid2D"
+                             Grid.Row="1"
+                             Margin="5,0,5,5"
+                             AlternationCount="2"
+                             UseModifiedDataGridStyle="True"
+                             ItemsSource2D="{Binding Int2DList}"
+                             RowBackground="White"
+                             AlternatingRowBackground="#ebebeb"                       
+                             Background="Transparent" HeadersVisibility="None">
+            </dg2d:DataGrid2D>
+
+            <Separator Margin="5" Grid.Row="2"/>
+            
+            <TextBlock Text="UseModifiedDataGridStyle=False" Grid.Row="3" Margin="5,0,5,2"/>
+            <dg2d:DataGrid2D Name="noModifiedStyleDataGrid2D"
+                             Grid.Row="4"
+                             Margin="5,0,5,5"
+                             AlternationCount="2"
+                             RowBackground="White"
+                             UseModifiedDataGridStyle="False"
+                             ItemsSource2D="{Binding Int2DList}"
+                             AlternatingRowBackground="#ebebeb"                       
+                             Background="Transparent">
+            </dg2d:DataGrid2D>
+        </Grid>
+    </Grid>
+</Window>

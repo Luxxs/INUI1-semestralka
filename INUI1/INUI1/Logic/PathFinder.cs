@@ -12,18 +12,17 @@ namespace INUI1.Logic
         private Cell[,] _cells;
 
         /* Seznam dvojic dvojice - slovnik. 
-         * Dvojice jsou souradnice, okolo kterych vznikaji cesty, 
-         * ktere jsou ve stavech ulozenych ve slovniku.
+         * Dvojice je souradnice, okolo ktere vznikla cesta a samotna cesta
          * Jsou to ty zakladni cesty, ktere se budou spojovat.
          * 
          * Pro lepsi prehlednost by bylo mozne zdedit Dictionary a doplnit mu field description 
          * (kde by byla souradnice, okolo ktere cesty vznikaly),
          * pak bychom meli jen LinkedList<DictionaryWithDescription> _baseDictionaries
          */
-        private LinkedList<Tuple<Tuple<int, int>, Dictionary<string, State>>> _baseDictionaries;
+        private LinkedList<Tuple<Tuple<int, int>, Dictionary<string, Path>>> _baseDictionaries;
 
         // pouziva se k vygenerovani cest okolo cisel
-        private StateGenerator _generator;
+        private PathGenerator _generator;
 
         // pouziva se ke kontrole, ze se cesty protinaji a ke spojovani cest
         private PathManager _manager;
@@ -37,10 +36,10 @@ namespace INUI1.Logic
         public PathFinder(Cell[,] cells)
         {
             _cells = cells;
-            _generator = new StateGenerator(_cells);
+            _generator = new PathGenerator(_cells);
             _manager = new PathManager();
 
-            _baseDictionaries = new LinkedList<Tuple<Tuple<int, int>, Dictionary<string, State>>>();
+            _baseDictionaries = new LinkedList<Tuple<Tuple<int, int>, Dictionary<string, Path>>>();
 
             Init();
         }
@@ -95,9 +94,9 @@ namespace INUI1.Logic
                 {
                     if (_cells[x, y].InPath)
                     {
-                        var dict = new Dictionary<string, State>();
+                        var dict = new Dictionary<string, Path>();
                         var coord = new Tuple<int, int>(x, y);
-                        _baseDictionaries.AddLast(new Tuple<Tuple<int, int>, Dictionary<string, State>>(coord, dict));
+                        _baseDictionaries.AddLast(new Tuple<Tuple<int, int>, Dictionary<string, Path>>(coord, dict));
                         _generator.OptimisticGeneration(dict, coord);
                         _numbersCount++;
                     }
@@ -115,10 +114,10 @@ namespace INUI1.Logic
         /// </summary>
         /// <param name="firstRound"></param>
         /// <returns>Nalezena cesta nebo null, pokud cestu nenajde.</returns>
-        private Path CombineStatesUntilPathIsFound(List<Dictionary<string, State>> firstRound)
+        private Path CombineStatesUntilPathIsFound(List<Dictionary<string, Path>> firstRound)
         {
             var thisRound = firstRound;
-            var nextRound = new List<Dictionary<string, State>>();
+            var nextRound = new List<Dictionary<string, Path>>();
             var roundCount = 0;
 
 
@@ -134,15 +133,14 @@ namespace INUI1.Logic
                         {
                             // slovnik predstavujuci skupinu vzniklou spojenim dvou "jednodussich" skupin
                             // napriklad dvojice vznikla spojenim dvou jednoduch cest
-                            var dict = new Dictionary<string, State>();
+                            var dict = new Dictionary<string, Path>();
                             foreach (var stateJ in thisRound[j])
                             {
-                                var intersect = _manager.FindPathsIntersect(stateI.Value.Path, stateJ.Value.Path);
+                                var intersect = _manager.FindPathsIntersect(stateI.Value, stateJ.Value);
                                 if (intersect != null)
                                 {
-                                    var path = _manager.JoinPaths(stateI.Value.Path, stateJ.Value.Path, intersect);
-                                    var state = new State(path);
-                                    dict.Add(state.Hash, state);
+                                    var path = _manager.JoinPaths(stateI.Value, stateJ.Value, intersect);
+                                    dict.Add(path.ToString(), path);
                                 }
                             }
                             // pokud vznikly nejake cesty, tak je v pristim kole budeme spojovat
@@ -154,7 +152,7 @@ namespace INUI1.Logic
 
                 // priprava na dalsi kolo
                 thisRound = nextRound;
-                nextRound = new List<Dictionary<string, State>>();
+                nextRound = new List<Dictionary<string, Path>>();
                 roundCount++;
             } 
             // pokracujeme, pokud jsme neprojeli vsechny kole a mame v pristime kole co spojovat
@@ -165,7 +163,7 @@ namespace INUI1.Logic
             {
                 // ...a pokud jsme nasli cestu, tak bude v nextRound[0].First()
                 if (nextRound.Count > 0 && nextRound[0].First().Value != null)
-                    return nextRound[0].First().Value.Path;
+                    return nextRound[0].First().Value;
             }
             
             return null;

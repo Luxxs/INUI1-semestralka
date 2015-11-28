@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using INUI1.Model;
 
 namespace INUI1.Logic
 {
     class PathFinder
     {
-        private Setup _setup;
+        private Cell[,] _cells;
 
         /* Seznam dvojic dvojice - slovnik. 
          * Dvojice jsou souradnice, okolo kterych vznikaji cesty, 
@@ -33,10 +34,10 @@ namespace INUI1.Logic
         // maximum "kol" (v kole se spojuji cesty)
         int _maxRounds = 0;
 
-        public PathFinder(Setup setup)
+        public PathFinder(Cell[,] cells)
         {
-            _setup = setup;
-            _generator = new StateGenerator(_setup);
+            _cells = cells;
+            _generator = new StateGenerator(_cells);
             _manager = new PathManager();
 
             _baseDictionaries = new LinkedList<Tuple<Tuple<int, int>, Dictionary<string, State>>>();
@@ -53,7 +54,7 @@ namespace INUI1.Logic
              * 
              * pokud optimitstickym nic nenalezeno, pokracovat realistickym a pri nejhorsim pesimistickym (komplet) generovanim
              */
-        public JoinedPath FindPath()
+        public Path FindPath()
         {
             // nejdrive hledame pres optimistic
             var resultOptimistic = CombineStatesUntilPathIsFound(_baseDictionaries.Select(tupleCoordDict => tupleCoordDict.Item2).ToList());
@@ -88,13 +89,11 @@ namespace INUI1.Logic
 
         private void Init()
         {
-            var board = _setup.Board;
-
-            for (int x = 0; x < board.GetLength(0); x++)
+            for (int y = 0; y < _cells.GetLength(0); y++)
             {
-                for (int y = 0; y < board.GetLength(1); y++)
+                for (int x = 0; x < _cells.GetLength(1); x++)
                 {
-                    if (board[x, y] != 0)
+                    if (_cells[x, y].InPath)
                     {
                         var dict = new Dictionary<string, State>();
                         var coord = new Tuple<int, int>(x, y);
@@ -116,7 +115,7 @@ namespace INUI1.Logic
         /// </summary>
         /// <param name="firstRound"></param>
         /// <returns>Nalezena cesta nebo null, pokud cestu nenajde.</returns>
-        private JoinedPath CombineStatesUntilPathIsFound(List<Dictionary<string, State>> firstRound)
+        private Path CombineStatesUntilPathIsFound(List<Dictionary<string, State>> firstRound)
         {
             var thisRound = firstRound;
             var nextRound = new List<Dictionary<string, State>>();
@@ -166,7 +165,7 @@ namespace INUI1.Logic
             {
                 // ...a pokud jsme nasli cestu, tak bude v nextRound[0].First()
                 if (nextRound.Count > 0 && nextRound[0].First().Value != null)
-                    return nextRound[0].First().Value.Path as JoinedPath;
+                    return nextRound[0].First().Value.Path;
             }
             
             return null;

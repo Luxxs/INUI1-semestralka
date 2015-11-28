@@ -4,91 +4,97 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using INUI1.Model;
 
 namespace INUI1.Logic
 {
     public class StateGenerator
     {
-        public Setup Setup { get; set; }
+        private Cell[,] _cells { get; set; }
 
-        public StateGenerator(Setup setup)
+        public StateGenerator(Cell[,] cells)
         {
-            Setup = setup;
+            _cells = cells;
         }
 
         public void OptimisticGeneration(Dictionary<string, State> states, Tuple<int, int> numberCoordinates)
         {
-            var pathLenght = Setup.Board[numberCoordinates.Item1, numberCoordinates.Item2];
+            var pathLenght = _cells[numberCoordinates.Item2, numberCoordinates.Item1].Value;
             if(pathLenght <= 1) return;
 
             var stateWithHorPath = CreateStateWithSimpleHorizontalPath(numberCoordinates, pathLenght, pathLenght/2);
-            if(IsSimplePathValid(stateWithHorPath.Path as SimplePath) && !states.ContainsKey(stateWithHorPath.Hash))
+            if(IsPathValid(stateWithHorPath.Path) && !states.ContainsKey(stateWithHorPath.Hash))
                 states.Add(stateWithHorPath.Hash, stateWithHorPath);
 
             var stateWithVertPath = CreateStateWithSimpleVerticalPath(numberCoordinates, pathLenght, pathLenght / 2);
-            if (IsSimplePathValid(stateWithVertPath.Path as SimplePath) && !states.ContainsKey(stateWithVertPath.Hash))
+            if (IsPathValid(stateWithVertPath.Path) && !states.ContainsKey(stateWithVertPath.Hash))
                 states.Add(stateWithVertPath.Hash, stateWithVertPath);
 
         }
 
         public void RealisticGeneration(Dictionary<string, State> states, Tuple<int, int> numberCoordinates)
         {
-            var pathLenght = Setup.Board[numberCoordinates.Item1, numberCoordinates.Item2];
+            var pathLenght = _cells[numberCoordinates.Item2, numberCoordinates.Item1].Value;
             if (pathLenght <= 1) return;
 
             for (int i = 0; i <= pathLenght/2; i++)
             {
                 var stateWithHorPath = CreateStateWithSimpleHorizontalPath(numberCoordinates, pathLenght, pathLenght/2 - i);
-                if (IsSimplePathValid(stateWithHorPath.Path as SimplePath) && !states.ContainsKey(stateWithHorPath.Hash))
+                if (IsPathValid(stateWithHorPath.Path) && !states.ContainsKey(stateWithHorPath.Hash))
                     states.Add(stateWithHorPath.Hash, stateWithHorPath);
 
                 var stateWithVertPath = CreateStateWithSimpleVerticalPath(numberCoordinates, pathLenght, pathLenght / 2 - i);
-                if (IsSimplePathValid(stateWithVertPath.Path as SimplePath) && !states.ContainsKey(stateWithVertPath.Hash))
+                if (IsPathValid(stateWithVertPath.Path) && !states.ContainsKey(stateWithVertPath.Hash))
                     states.Add(stateWithVertPath.Hash, stateWithVertPath);
             }
         }
 
         public void PesimisticGeneration(Dictionary<string, State> states, Tuple<int, int> numberCoordinates)
         {
-            var pathLenght = Setup.Board[numberCoordinates.Item1, numberCoordinates.Item2];
+            var pathLenght = _cells[numberCoordinates.Item2, numberCoordinates.Item1].Value;
             if (pathLenght <= 1) return;
 
             for (int i = 0; i <= pathLenght; i++)
             {
                 var stateWithHorPath = CreateStateWithSimpleHorizontalPath(numberCoordinates, pathLenght, pathLenght - i);
-                if (IsSimplePathValid(stateWithHorPath.Path as SimplePath) && !states.ContainsKey(stateWithHorPath.Hash))
+                if (IsPathValid(stateWithHorPath.Path) && !states.ContainsKey(stateWithHorPath.Hash))
                     states.Add(stateWithHorPath.Hash, stateWithHorPath);
 
                 var stateWithVertPath = CreateStateWithSimpleVerticalPath(numberCoordinates, pathLenght, pathLenght - i);
-                if (IsSimplePathValid(stateWithVertPath.Path as SimplePath) && !states.ContainsKey(stateWithVertPath.Hash))
+                if (IsPathValid(stateWithVertPath.Path) && !states.ContainsKey(stateWithVertPath.Hash))
                     states.Add(stateWithVertPath.Hash, stateWithVertPath);
             }
         }
 
         private State CreateStateWithSimpleHorizontalPath(Tuple<int, int> centre, int lenght, int offset)
         {
-            var horizontalPath =
-                new SimplePath(
-                    SimplePathType.Horizontal,
-                    new Tuple<int, int>(centre.Item1 - offset, centre.Item2),
-                    new Tuple<int, int>(centre.Item1 - offset + lenght - 1, centre.Item2));
-            return new State(horizontalPath);
+            var points = new LinkedList<Tuple<int, int>>();
+            for (int i = 0; i < lenght; i++)
+            {
+                points.AddLast(new Tuple<int, int>(centre.Item1 - offset + i, centre.Item2));
+            }
+
+            return new State(new Path {Points = points});
         }
 
         private State CreateStateWithSimpleVerticalPath(Tuple<int, int> centre, int lenght, int offset)
         {
-            var horizontalPath =
-                new SimplePath(
-                    SimplePathType.Vertical,
-                    new Tuple<int, int>(centre.Item1, centre.Item2 - offset),
-                    new Tuple<int, int>(centre.Item1, centre.Item2 - offset + lenght - 1));
-            return new State(horizontalPath);
+            var points = new LinkedList<Tuple<int, int>>();
+            for (int i = 0; i < lenght; i++)
+            {
+                points.AddLast(new Tuple<int, int>(centre.Item1, centre.Item2 - offset + i));
+            }
+
+            return new State(new Path { Points = points });
         }
 
-        private bool IsSimplePathValid(SimplePath path)
+        private bool IsPathValid(Path path)
         {
-            if (path.Start.Item1 < 0 || path.Start.Item1 > Setup.Board.GetLength(0)) return false;
-            if (path.Start.Item2 < 0 || path.Start.Item2 > Setup.Board.GetLength(1)) return false;
+            foreach (var point in path.Points)
+            {
+                if (point.Item1 < 0 || point.Item1 > _cells.GetLength(0)) return false;
+                if (point.Item2 < 0 || point.Item2 > _cells.GetLength(1)) return false;
+            }
             return true;
         }
     }

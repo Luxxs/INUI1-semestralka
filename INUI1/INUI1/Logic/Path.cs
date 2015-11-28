@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace INUI1.Logic
 {
-    public class JoinedPath : AbstractPath
+    public class Path
     {
-        public LinkedList<Tuple<int, int>> Path { get; set; }
+        public LinkedList<Tuple<int, int>> Points { get; set; }
 
         private string _toString;
-        
+
         public override string ToString()
         {
             if (_toString != null) return _toString;
             _toString = "(";
-            foreach (var coord in Path)
+            foreach (var coord in Points)
             {
                 _toString += string.Format("[{0};{1}]-", coord.Item1, coord.Item2);
             }
@@ -25,9 +25,9 @@ namespace INUI1.Logic
             return _toString;
         }
 
-        public override LinkedList<Tuple<int, int>> GetPathAsTupleSeries()
+        public LinkedList<Tuple<int, int>> GetPathAsTupleSeries()
         {
-            return Path;
+            return Points;
         }
     }
 }

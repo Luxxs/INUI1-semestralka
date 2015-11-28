@@ -8,10 +8,10 @@ namespace INUI1.Logic
 {
     public class State
     {
-        public AbstractPath Path { get; set; }
+        public Path Path { get; set; }
         public string Hash { get; private set; }
 
-        public State(AbstractPath path)
+        public State(Path path)
         {
             Path = path;
             Hash = path.ToString();

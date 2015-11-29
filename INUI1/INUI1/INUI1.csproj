@@ -108,12 +108,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DataGrid2DTest\DataGrid2DLibrary\DataGrid2DLibrary.csproj">
-      <Project>{7d76d9e7-af25-4aa5-995b-e1a526f192ea}</Project>
-      <Name>DataGrid2DLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

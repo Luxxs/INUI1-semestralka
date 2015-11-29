@@ -9,7 +9,7 @@ namespace INUI1.Logic
 {
     public class PathManager
     {
-        public Tuple<int, int> FindPathsIntersect(AbstractPath first, AbstractPath second)
+        public Tuple<int, int> FindPathsIntersect(Path first, Path second)
         {
             return (
                 from firstPathCoords in first.GetPathAsTupleSeries()
@@ -22,16 +22,13 @@ namespace INUI1.Logic
         // seradit tak aby cesta sla z levyho horniho rohu do pravyho spodniho
         // aby se nestalo, ze budou dva stavy se stejnyma cestama vyhodnoceny jako stejny
         // spis v pathmanageru pri joinovani
-        public JoinedPath JoinPaths(AbstractPath first, AbstractPath second, Tuple<int, int> intersect)
+        public Path JoinPaths(Path first, Path second, Tuple<int, int> intersect)
         {
             if (intersect == null)
                 throw new ArgumentNullException("intersect", "Intersect can't be null");
 
-            if (first is SimplePath && second is SimplePath)
-            {
-                if ((first as SimplePath).PathType.Equals((second as SimplePath).PathType))
-                    throw new ArgumentException("Can't join simple paths of the same type");
-            }
+            // TODO: kontrola kolmosti
+
             
             // alg spojeni - jit z prvni dokud se nedostaneme na intersect
             // napojit druhou, pokud je druha joined a intersect neni to prvni / posledni, 
@@ -47,7 +44,7 @@ namespace INUI1.Logic
                     foreach (var secondPathPoint in GetSubPathAfterIntersect(second, point))
                         path.AddLast(secondPathPoint);
 
-                    foreach (var secondPathPoint in GetSubPathBeforeIntersect(second, point))
+                    foreach (var secondPathPoint in GetSubPathBeforeIntersect(second, point).Reverse())
                         path.AddLast(secondPathPoint);
                 }
             }
@@ -56,10 +53,10 @@ namespace INUI1.Logic
 
             // taky kontrola, ze cesty vubec intersect obsahuji
 
-            return new JoinedPath {Path = path};
+            return new Path {Points = path};
         }
 
-        private LinkedList<Tuple<int, int>> GetSubPathBeforeIntersect(AbstractPath path, Tuple<int, int> intersect)
+        private LinkedList<Tuple<int, int>> GetSubPathBeforeIntersect(Path path, Tuple<int, int> intersect)
         {
             var subPath = new LinkedList<Tuple<int, int>>();
             foreach (var point in path.GetPathAsTupleSeries().TakeWhile(point => !compareCoords(point, intersect)))
@@ -67,7 +64,7 @@ namespace INUI1.Logic
             return subPath;
         }
 
-        private LinkedList<Tuple<int, int>> GetSubPathAfterIntersect(AbstractPath path, Tuple<int, int> intersect)
+        private LinkedList<Tuple<int, int>> GetSubPathAfterIntersect(Path path, Tuple<int, int> intersect)
         {
             var subPath = new LinkedList<Tuple<int, int>>();
             var intersectReached = false;

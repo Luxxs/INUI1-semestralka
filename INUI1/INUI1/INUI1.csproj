@@ -71,14 +71,10 @@
     <Compile Include="Converters\InPathToBackgroundBrushConverter.cs" />
     <Compile Include="Converters\CellNumberContentConverter.cs" />
     <Compile Include="DesignTime\SampleViewModel.cs" />
-    <Compile Include="Logic\AbstractPath.cs" />
-    <Compile Include="Logic\JoinedPath.cs" />
+    <Compile Include="Logic\Path.cs" />
     <Compile Include="Logic\PathFinder.cs" />
     <Compile Include="Logic\PathManager.cs" />
-    <Compile Include="Logic\SimplePath.cs" />
-    <Compile Include="Logic\Setup.cs" />
-    <Compile Include="Logic\State.cs" />
-    <Compile Include="Logic\StateGenerator.cs" />
+    <Compile Include="Logic\PathGenerator.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

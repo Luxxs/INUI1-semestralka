@@ -40,7 +40,6 @@ namespace INUI1
             int cols = 0;
             if (int.TryParse(Dimension1.Text, out rows) && int.TryParse(Dimension2.Text, out cols) && rows > 1 && cols > 1)
             {
-                dimensionFormatError.Visibility = Visibility.Collapsed;
                 (FindByName("cellGrid", box) as System.Windows.Controls.Primitives.UniformGrid).Columns = cols;
                 MainViewModel.State.Clear();
                 for (int i = 0; i < rows * cols; i++)
@@ -50,7 +49,7 @@ namespace INUI1
             }
             else
             {
-                dimensionFormatError.Visibility = Visibility.Visible;
+                MessageBox.Show("Zadejte celočíselné rozměry větší než jedna.", "Hlavolam");
             }
         }
         private FrameworkElement FindByName(string name, FrameworkElement root)

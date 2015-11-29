@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:INUI1"
-        xmlns:dataGrid2D="clr-namespace:DataGrid2DLibrary;assembly=DataGrid2DLibrary"
         xmlns:sampleData="clr-namespace:INUI1.DesignTime"
         xmlns:converters="clr-namespace:INUI1.Converters"
         mc:Ignorable="d"
@@ -55,8 +54,7 @@
             <Button Name="CreateMatrixButton"  Content="Vytvořit matici" Height="20" VerticalAlignment="Top" Click="CreateMatrixButton_Click"/>
         </StackPanel>
         
-        <TextBlock Name="dimensionFormatError" Grid.Row="1" Text="Zadejte celočíselné rozměry větší než jedna." Foreground="Red" Visibility="Collapsed" />
-        <ListBox Name="box" Grid.Row="1" ItemsSource="{Binding State}" Background="Transparent" Padding="-1,-1,0,0">
+        <ListBox Name="box" Grid.Row="1" ItemsSource="{Binding State}" Background="Transparent" Padding="-1,-1,0,0" Margin="0,5,0,5">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Name="cellGrid" Columns="3" HorizontalAlignment="Center" VerticalAlignment="Center" />

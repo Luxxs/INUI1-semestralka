@@ -68,8 +68,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Converters\CellBackgroundBrushConverter.cs" />
-    <Compile Include="Converters\IntToStringArrayContentConverter.cs" />
+    <Compile Include="Converters\InPathToBackgroundBrushConverter.cs" />
     <Compile Include="Converters\CellNumberContentConverter.cs" />
     <Compile Include="DesignTime\SampleViewModel.cs" />
     <Compile Include="Logic\AbstractPath.cs" />

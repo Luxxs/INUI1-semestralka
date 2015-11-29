@@ -1,6 +1,7 @@
 ﻿using INUI1.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -11,14 +12,14 @@ namespace INUI1.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private Cell[,] _matrix = new Cell[,] { { new Cell(0, false), new Cell(2, true), new Cell(0, false) }, { new Cell(0, false), new Cell(0, true), new Cell(2, true) } };
-        public Cell[,] Matrix
+        private ObservableCollection<Cell> _state = new ObservableCollection<Cell>();
+        public ObservableCollection<Cell> State
         {
-            get { return _matrix; }
-            set { SetProperty(ref _matrix, value); }
+            get { return _state; }
+            set { SetProperty(ref _state, value); }
         }
 
-        #region INotifyPropertyChanged implementation
+        #region INotifyPropertyChanged members
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)

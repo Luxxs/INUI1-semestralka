@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using INUI1.ViewModel;
 using INUI1.Model;
+using INUI1.DesignTime;
 
 namespace INUI1
 {
@@ -29,12 +30,50 @@ namespace INUI1
         private MainViewModel mainViewModel = new MainViewModel();
         public MainWindow()
         {
+            MainViewModel.State = SampleViewModel.State;
             InitializeComponent();
         }
 
         private void CreateMatrixButton_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModel.Matrix = new Cell[int.Parse(Dimension1.Text), int.Parse(Dimension2.Text)];
+            int rows = 0;
+            int cols = 0;
+            if (int.TryParse(Dimension1.Text, out rows) && int.TryParse(Dimension2.Text, out cols) && rows > 1 && cols > 1)
+            {
+                dimensionFormatError.Visibility = Visibility.Collapsed;
+                (FindByName("cellGrid", box) as System.Windows.Controls.Primitives.UniformGrid).Columns = cols;
+                MainViewModel.State.Clear();
+                for (int i = 0; i < rows * cols; i++)
+                {
+                    MainViewModel.State.Add(new Cell(0, false));
+                }
+            }
+            else
+            {
+                dimensionFormatError.Visibility = Visibility.Visible;
+            }
+        }
+        private FrameworkElement FindByName(string name, FrameworkElement root)
+        {
+            Stack<FrameworkElement> tree = new Stack<FrameworkElement>();
+            tree.Push(root);
+
+            while (tree.Count > 0)
+            {
+                FrameworkElement current = tree.Pop();
+                if (current.Name == name)
+                    return current;
+
+                int count = VisualTreeHelper.GetChildrenCount(current);
+                for (int i = 0; i < count; ++i)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(current, i);
+                    if (child is FrameworkElement)
+                        tree.Push((FrameworkElement)child);
+                }
+            }
+
+            return null;
         }
     }
 

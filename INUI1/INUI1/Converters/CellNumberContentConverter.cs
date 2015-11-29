@@ -17,7 +17,15 @@ namespace INUI1.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException();
+            int parse = 0;
+            if(value is string)
+            {
+                if((value as string).Equals("") || !int.TryParse(value as string, out parse))
+                {
+                    return 0;
+                }
+            }
+            return parse;
         }
     }
 }

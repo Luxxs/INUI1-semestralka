@@ -7,11 +7,11 @@ using System.Windows.Shapes;
 
 namespace INUI1.Converters
 {
-    class CellBackgroundBrushConverter : IValueConverter
+    class InPathToBackgroundBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Cell && (value as Cell).InPath)
+            if (value is bool && (bool) value)
             {
                 return new SolidColorBrush(Colors.LightGray);
             }

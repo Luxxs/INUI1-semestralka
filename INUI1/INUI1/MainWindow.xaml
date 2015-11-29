@@ -13,60 +13,10 @@
         d:DataContext="{Binding Source={d:DesignInstance Type=sampleData:SampleViewModel, IsDesignTimeCreatable=True}}">
     <Window.Resources>
         <converters:CellNumberContentConverter x:Key="CellNumberContentConverter" />
-        <converters:CellBackgroundBrushConverter x:Key="CellBackgroundBrushConverter" />
-        
-        <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}" >
-            <Setter Property="TextBlock.TextAlignment" Value="Right" />
-            <Setter Property="TextBlock.VerticalAlignment" Value="Stretch"/>
-            <Setter Property="TextBlock.HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type DataGridCell}">
-                        <Border Background="{TemplateBinding Background}"
-                            BorderBrush="DarkGray"
-                            ContextMenu="{TemplateBinding ContextMenu}"
-                            BorderThickness="1,1,1,1"
-                            Visibility="{TemplateBinding Visibility}"
-                            SnapsToDevicePixels="True">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="2"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="2"/>
-                                </Grid.ColumnDefinitions>
-                                <ContentPresenter Grid.ZIndex="2" Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch">
-                                </ContentPresenter>
-                                <Rectangle x:Name="c_rectangle" Grid.ZIndex="-1" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"
-                                        Fill="{Binding InPath, Converter={StaticResource CellBackgroundBrushConverter}}"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="DataGridCell.IsEditing" Value="True">
-                                <Setter TargetName="c_rectangle" Property="Fill" Value="White"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=AlternationIndex}" Value="1" >
-                    <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=AlternatingRowBackground}"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=AlternationIndex}" Value="0" >
-                    <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=RowBackground}"/>
-                </DataTrigger>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Background" Value="#3399ff"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+        <converters:InPathToBackgroundBrushConverter x:Key="InPathToBackgroundBrushConverter" />
     </Window.Resources>
     
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -105,20 +55,21 @@
             <Button Name="CreateMatrixButton"  Content="Vytvořit matici" Height="20" VerticalAlignment="Top" Click="CreateMatrixButton_Click"/>
         </StackPanel>
         
-        <dataGrid2D:DataGrid2D Name="dataGrid2D"
-                               Grid.Row="1"
-                               Margin="5,0,5,5"
-                               ItemsSource2D="{Binding Matrix}"
-                               CellStyle="{StaticResource MyDataGridCellStyle}"
-                               UseModifiedDataGridStyle="True"
-                               SelectionMode="Single"
-                               SelectionUnit="Cell"
-                               Background="Transparent"
-                               HeadersVisibility="None"
-                               HorizontalAlignment="Center" VerticalAlignment="Center">
-        </dataGrid2D:DataGrid2D>
+        <TextBlock Name="dimensionFormatError" Grid.Row="1" Text="Zadejte celočíselné rozměry větší než jedna." Foreground="Red" Visibility="Collapsed" />
+        <ListBox Name="box" Grid.Row="1" ItemsSource="{Binding State}" Background="Transparent" Padding="-1,-1,0,0">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Name="cellGrid" Columns="3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBox Text="{Binding Path=Value, Converter={StaticResource CellNumberContentConverter}}" Background="{Binding InPath, Converter={StaticResource InPathToBackgroundBrushConverter}}" Width="18" TextAlignment="Center" Margin="-6,-3,-5,-2"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Hledat řešení" />
         </StackPanel>
 

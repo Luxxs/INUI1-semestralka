@@ -51,7 +51,7 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <Button Name="CreateMatrixButton"  Content="Vytvořit matici" Height="20" VerticalAlignment="Top" Click="CreateMatrixButton_Click"/>
+            <Button Name="createMatrixButton"  Content="Vytvořit matici" Height="20" VerticalAlignment="Top" Click="createMatrixButton_Click"/>
         </StackPanel>
         
         <ListBox Name="box" Grid.Row="1" ItemsSource="{Binding State}" Background="Transparent" Padding="-1,-1,0,0" Margin="0,5,0,5">
@@ -68,7 +68,7 @@
         </ListBox>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Hledat řešení" />
+            <Button Name="searchSolutionButton" Content="Hledat řešení" Click="searchSolutionButton_Click" />
         </StackPanel>
 
     </Grid>

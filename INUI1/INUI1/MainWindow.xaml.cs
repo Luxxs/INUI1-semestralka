@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using INUI1.ViewModel;
 using INUI1.Model;
 using INUI1.DesignTime;
+using INUI1.Converters;
 
 namespace INUI1
 {
@@ -30,11 +31,10 @@ namespace INUI1
         private MainViewModel mainViewModel = new MainViewModel();
         public MainWindow()
         {
-            MainViewModel.State = SampleViewModel.State;
             InitializeComponent();
         }
 
-        private void CreateMatrixButton_Click(object sender, RoutedEventArgs e)
+        private void createMatrixButton_Click(object sender, RoutedEventArgs e)
         {
             int rows = 0;
             int cols = 0;
@@ -46,6 +46,7 @@ namespace INUI1
                 {
                     MainViewModel.State.Add(new Cell(0, false));
                 }
+                CellNumberContentConverter.MinDimension = (rows < cols) ? rows : cols;
             }
             else
             {
@@ -73,6 +74,11 @@ namespace INUI1
             }
 
             return null;
+        }
+
+        private void searchSolutionButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

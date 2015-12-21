@@ -19,6 +19,7 @@ using INUI1.ViewModel;
 using INUI1.Model;
 using INUI1.DesignTime;
 using INUI1.Converters;
+using INUI1.Logic;
 
 namespace INUI1
 {
@@ -40,7 +41,7 @@ namespace INUI1
             int cols = 0;
             if (int.TryParse(Dimension1.Text, out rows) && int.TryParse(Dimension2.Text, out cols) && rows > 1 && cols > 1)
             {
-                (FindByName("cellGrid", box) as System.Windows.Controls.Primitives.UniformGrid).Columns = cols;
+                MainViewModel.Columns = cols;
                 MainViewModel.State.Clear();
                 for (int i = 0; i < rows * cols; i++)
                 {
@@ -50,37 +51,36 @@ namespace INUI1
             }
             else
             {
-                MessageBox.Show("Zadejte celočíselné rozměry větší než jedna.", "Hlavolam");
+                MessageBox.Show("Zadejte celočíselné rozměry větší než jedna.", Title);
             }
-        }
-        private FrameworkElement FindByName(string name, FrameworkElement root)
-        {
-            Stack<FrameworkElement> tree = new Stack<FrameworkElement>();
-            tree.Push(root);
-
-            while (tree.Count > 0)
-            {
-                FrameworkElement current = tree.Pop();
-                if (current.Name == name)
-                    return current;
-
-                int count = VisualTreeHelper.GetChildrenCount(current);
-                for (int i = 0; i < count; ++i)
-                {
-                    DependencyObject child = VisualTreeHelper.GetChild(current, i);
-                    if (child is FrameworkElement)
-                        tree.Push((FrameworkElement)child);
-                }
-            }
-
-            return null;
         }
 
         private void searchSolutionButton_Click(object sender, RoutedEventArgs e)
         {
-
+            int[,] inputMatrix = new int[MainViewModel.State.Count / MainViewModel.Columns, MainViewModel.Columns];
+            int col = 0;
+            int row = 0;
+            foreach(var cell in MainViewModel.State)
+            {
+                inputMatrix[row, col] = cell.Value;
+                col = (col < MainViewModel.Columns - 1) ? col + 1 : 0;
+                row = (col == 0) ? row + 1 : row;
+            }
+            var pathSearch = new HledaniCesty(inputMatrix);
+            try {
+                bool[,] result = pathSearch.Vypocti();
+                col = 0;
+                row = 0;
+                foreach (var cell in MainViewModel.State)
+                {
+                    cell.InPath = result[row, col];
+                    col = (col < MainViewModel.Columns - 1) ? col + 1 : 0;
+                    row = (col == 0) ? row + 1 : row;
+                }
+            } catch(ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message, Title);
+            }
         }
     }
-
-
 }

@@ -1,2 +1,0 @@
-﻿Downloaded from: http://www.mediafire.com/download/tm1arm230rr1tgi/DataGrid2DTest.zip
-StackOverflow topic: http://stackoverflow.com/questions/276808/how-to-populate-a-wpf-grid-based-on-a-2-dimensional-array

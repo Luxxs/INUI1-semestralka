@@ -12,6 +12,13 @@ namespace INUI1.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private int _columns;
+        public int Columns
+        {
+            get { return _columns; }
+            set { SetProperty(ref _columns, value); }
+        }
+
         private ObservableCollection<Cell> _state = new ObservableCollection<Cell>();
         public ObservableCollection<Cell> State
         {

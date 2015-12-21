@@ -51,13 +51,13 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <Button Name="createMatrixButton"  Content="Vytvořit matici" Height="20" VerticalAlignment="Top" Click="createMatrixButton_Click"/>
+            <Button Name="createMatrixButton"  Content="Vytvořit matici" Height="20" VerticalAlignment="Top" Click="createMatrixButton_Click" Padding="5,1"/>
         </StackPanel>
         
-        <ListBox Name="box" Grid.Row="1" ItemsSource="{Binding State}" Background="Transparent" Padding="-1,-1,0,0" Margin="0,5,0,5">
+        <ListBox Name="box" Grid.Row="1" ItemsSource="{Binding State}" Background="Transparent" Padding="-1,-1,-2,-2" Margin="0,5,0,5">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Name="cellGrid" Columns="3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <UniformGrid Name="cellGrid" Columns="{Binding Columns}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
@@ -68,7 +68,7 @@
         </ListBox>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Name="searchSolutionButton" Content="Hledat řešení" Click="searchSolutionButton_Click" />
+            <Button Name="searchSolutionButton" Content="Hledat řešení" Click="searchSolutionButton_Click" Padding="5,1" />
         </StackPanel>
 
     </Grid>

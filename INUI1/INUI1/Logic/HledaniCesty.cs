@@ -41,20 +41,17 @@ namespace INUI1.Logic
             {
                 throw new ArgumentException("Výsledek nenalezen");
             }
-            return listPlatnychCest.ElementAt(0);
+            return listPlatnychCest.First();
         }
 
         private List<bool[,]> provedKontroly(List<bool[,]> listCest)
         {
             //Alg vrati jen souvisle cesty
-            List<bool[,]> listSouvislychCest = provedKOnttroluSouvislosti(listCest);
-            //Alg vyradi cesty se cttvercem
-            List<bool[,]> listPlatnychCest = kontrolaCvercu(listSouvislychCest);
-            listSouvislychCest.Clear(); //Uklid
+            List<bool[,]> souvisleCesty = provedKontroluSouvislosti(listCest);
+            //Alg vyradi cesty se ctvercem
+            List<bool[,]> cestyBezCtverce = kontrolaCvercu(souvisleCesty);
             //Alg prekontroluje delkycest
-            List<bool[,]> listPom = kontrolaDelekCest(listPlatnychCest);
-
-            return listPom;
+            return kontrolaDelekCest(cestyBezCtverce);
         }
 
         private List<bool[,]> kontrolaCvercu(List<bool[,]> listSouvislychCest)
@@ -90,7 +87,7 @@ namespace INUI1.Logic
                 bool pridat = true;
                 foreach (var bod in vyznamneBody)
                 {
-                    if (!dpovidaDelkaCeste(bod, cesta))
+                    if (!odpovidaDelkaCeste(bod, cesta))
                     {
                         pridat = false;
                     }
@@ -103,7 +100,7 @@ namespace INUI1.Logic
             return listPom;
         }
 
-        private bool dpovidaDelkaCeste(Bod bod, bool[,] cesta)
+        private bool odpovidaDelkaCeste(Bod bod, bool[,] cesta)
         {
             int delkaCesty = 0;
             if ((bod.x - 1 < 0 || !cesta[bod.x - 1, bod.y]) && (bod.x + 1 == cesta.GetLength(0) || !cesta[bod.x + 1, bod.y]))
@@ -159,7 +156,7 @@ namespace INUI1.Logic
             return bod.hodnotaBodu == delkaCesty;
         }
 
-        private List<bool[,]> provedKOnttroluSouvislosti(List<bool[,]> listCest)
+        private List<bool[,]> provedKontroluSouvislosti(List<bool[,]> listCest)
         {
             List<bool[,]> listSouvislych = new List<bool[,]>();
             foreach (var cesta in listCest)

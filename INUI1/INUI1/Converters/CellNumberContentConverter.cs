@@ -22,7 +22,7 @@ namespace INUI1.Converters
             int parse = 0;
             if(value is string)
             {
-                if((value as string).Equals("") || !int.TryParse(value as string, out parse) || parse < 2 || parse > MinDimension)
+                if((value as string).Equals("") || !int.TryParse(value as string, out parse) || parse > MinDimension)
                 {
                     return 0;
                 }
